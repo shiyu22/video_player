@@ -1,5 +1,5 @@
 from yolov3_detector.paddle_yolo import run, YOLO_v3 as Detector
-from common.config import DATA_PATH, OBJECT_PATH
+from common.config import DATA_PATH
 
 def main():
     detector = Detector()
