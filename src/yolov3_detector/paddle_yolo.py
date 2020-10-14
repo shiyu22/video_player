@@ -11,15 +11,15 @@ import paddle.fluid as fluid
 from yolov3_detector.yolo_infer import offset_to_lengths
 from yolov3_detector.yolo_infer import coco17_category_info, bbox2out
 from yolov3_detector.yolo_infer import Preprocess
-from common.config import DATA_PATH, OBJECT_PATH
+from common.config import DATA_PATH, OBJECT_PATH, COCO_MODEL_PATH, YOLO_CONFIG_PATH
 
 
-def temp_directory():
-    return os.path.abspath(os.path.join('.', 'data'))
+# def temp_directory():
+#     return os.path.abspath(os.path.join('.', 'data'))
 
 
-COCO_MODEL_PATH = os.path.join(temp_directory(), "yolov3_darknet")
-YOLO_CONFIG_PATH = os.path.join(COCO_MODEL_PATH, "yolo.yml")
+# COCO_MODEL_PATH = os.path.join(temp_directory(), "yolov3_darknet")
+# YOLO_CONFIG_PATH = os.path.join(COCO_MODEL_PATH, "yolo.yml")
 
 
 class BoundingBox:
