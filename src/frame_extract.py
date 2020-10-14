@@ -1,4 +1,5 @@
 import cv2
+import uuid
 from common.config import DATA_PATH
 
 def extract_frame(file_path, fps, prefix):
