@@ -18,7 +18,6 @@ MYSQL_PWD = os.getenv("MYSQL_PWD", "123456")
 MYSQL_DB = os.getenv("MYSQL_DB", "mysql")
 
 DATA_PATH = os.getenv("DATA_PATH", "./data")
-OBJECT_PATH = os.getenv("OBJECT_PATH", "./data/object")
 
 COCO_MODEL_PATH = os.getenv("OBJECT_PATH", "./yolov3_detector/data/yolov3_darknet")
 YOLO_CONFIG_PATH = os.getenv("OBJECT_PATH", "./yolov3_detector/data/yolov3_darknet/yolo.yml")

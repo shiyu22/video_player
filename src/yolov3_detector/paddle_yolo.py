@@ -11,7 +11,7 @@ import paddle.fluid as fluid
 from yolov3_detector.yolo_infer import offset_to_lengths
 from yolov3_detector.yolo_infer import coco17_category_info, bbox2out
 from yolov3_detector.yolo_infer import Preprocess
-from common.config import DATA_PATH, OBJECT_PATH, COCO_MODEL_PATH, YOLO_CONFIG_PATH
+from common.config import DATA_PATH, COCO_MODEL_PATH, YOLO_CONFIG_PATH
 
 
 # def temp_directory():
@@ -34,7 +34,7 @@ class BoundingBox:
 
 def cv2base64(image, fps):
     try:
-        tmp_file_name = os.path.join(OBJECT_PATH, "%d-%s.jpg" % (fps, uuid.uuid1()))
+        tmp_file_name = os.path.join(DATA_PATH, "object/%d-%s.jpg" % (fps, uuid.uuid1()))
         cv2.imwrite(tmp_file_name, image)
         with open(tmp_file_name, "rb") as f:
             base64_data = base64.b64encode(f.read())
@@ -102,10 +102,8 @@ class YOLO_v3:
     def get_obj_image(self, images, bboxes):
         obj_images = []
         for i, frame_bboxes in enumerate(bboxes):
-            print("i:", i)
             frame_object = []
             for j, bbox in enumerate(frame_bboxes):
-                print("j:", j)
                 tmp_obj = images[i][int(bbox.y1):int(
                     bbox.y2), int(bbox.x1):int(bbox.x2)]
                 frame_object.append(cv2base64(tmp_obj, self.fps))
@@ -141,6 +139,7 @@ class YOLO_v3:
 def run(detector, path):
     result_images = []
     images = os.listdir(path)
+    images.sort()
     start = time.time()
     try:
         for image_path in images:
