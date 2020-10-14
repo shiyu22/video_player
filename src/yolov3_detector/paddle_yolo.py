@@ -62,7 +62,7 @@ class YOLO_v3:
             model_filename='__model__',
             params_filename='__params__')
         self.clsid2catid, self.catid2name = coco17_category_info(False)
-        self.execute(np.zeros((300, 300, 3), dtype='float32'))
+        self.execute(np.zeros((300, 300, 3), dtype='float32'), DATA_PATH)
 
     def get_operator_config(self):
         try:
