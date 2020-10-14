@@ -34,6 +34,7 @@ class BoundingBox:
 
 def cv2base64(image, fps):
     try:
+        os.mkdir(DATA_PATH + '/' + "object")
         tmp_file_name = os.path.join(DATA_PATH, "object/%d-%s.jpg" % (fps, uuid.uuid1()))
         cv2.imwrite(tmp_file_name, image)
         with open(tmp_file_name, "rb") as f:
