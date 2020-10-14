@@ -8,9 +8,9 @@ import numpy as np
 import yaml
 import cv2
 import paddle.fluid as fluid
-from yolo_infer import offset_to_lengths
-from yolo_infer import coco17_category_info, bbox2out
-from yolo_infer import Preprocess
+from yolov3_detector.yolo_infer import offset_to_lengths
+from yolov3_detector.yolo_infer import coco17_category_info, bbox2out
+from yolov3_detector.yolo_infer import Preprocess
 from common.config import DATA_PATH, OBJECT_PATH
 
 
