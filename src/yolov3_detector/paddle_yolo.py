@@ -32,7 +32,7 @@ class BoundingBox:
         self.label = label
 
 
-def cv2base64(image, fps):
+def cv2base64(image, fps, path):
     try:
         tmp_file_name = os.path.join(path, "object/%d-%s.jpg" % (fps, uuid.uuid1()))
         cv2.imwrite(tmp_file_name, image)
@@ -99,20 +99,20 @@ class YOLO_v3:
         return bboxes
 
     @staticmethod
-    def get_obj_image(self, images, bboxes):
+    def get_obj_image(self, images, bboxes, path):
         obj_images = []
         for i, frame_bboxes in enumerate(bboxes):
             frame_object = []
             for j, bbox in enumerate(frame_bboxes):
                 tmp_obj = images[i][int(bbox.y1):int(
                     bbox.y2), int(bbox.x1):int(bbox.x2)]
-                frame_object.append(cv2base64(tmp_obj, self.fps))
+                frame_object.append(cv2base64(tmp_obj, self.fps, path))
             
             self.fps += 1
             obj_images.append(frame_object)
         return obj_images
 
-    def execute(self, image):
+    def execute(self, image, path):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         img_data = Preprocess(image,
@@ -132,7 +132,7 @@ class YOLO_v3:
         bbox_results = bbox2out([res], self.clsid2catid, False)
         bboxes = self.get_bboxes(bbox_results, 0.5)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        objs = self.get_obj_image(self, [image], bboxes)
+        objs = self.get_obj_image(self, [image], bboxes, path)
         return objs[0]
 
 
@@ -143,14 +143,14 @@ def run(detector, path):
     start = time.time()
     if os.path.exists(path + '/object'):
         os.mkdir(path + '/object')
-        
+
     try:
         for image_path in images:
             if not image_path.endswith(".jpg"):
                 continue
             print(path + '/' + image_path)
             image = cv2.imread(path + '/' + image_path)
-            result_images.append(detector.execute(image))
+            result_images.append(detector.execute(image, path))
     except Exception as e:
         logging.error("something error: %s", str(e), exc_info=True)
     end = time.time()
