@@ -141,10 +141,12 @@ class YOLO_v3:
 def run(detector, images):
     result_images = []
     images = os.listdir(images)
+    start = time.time()
     try:
         for image_path in images:
             if not image_path.endswith(".jpg"):
                 continue
+            print(image_path)
             image = cv2.imread(image_path)
             result_images.append(detector.execute(image))
     except Exception as e:
