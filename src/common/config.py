@@ -18,3 +18,4 @@ MYSQL_PWD = os.getenv("MYSQL_PWD", "123456")
 MYSQL_DB = os.getenv("MYSQL_DB", "mysql")
 
 DATA_PATH = os.getenv("DATA_PATH", "./data")
+OBJECT_PATH = os.getenv("OBJECT_PATH", "./data/object")

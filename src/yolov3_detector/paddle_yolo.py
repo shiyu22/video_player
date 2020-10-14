@@ -11,7 +11,7 @@ import paddle.fluid as fluid
 from yolo_infer import offset_to_lengths
 from yolo_infer import coco17_category_info, bbox2out
 from yolo_infer import Preprocess
-from common.config import DATA_PATH
+from common.config import DATA_PATH, OBJECT_PATH
 
 
 def temp_directory():
@@ -34,7 +34,7 @@ class BoundingBox:
 
 def cv2base64(image, fps):
     try:
-        tmp_file_name = os.path.join(DATA_PATH, "%d-%s.jpg" % (fps, uuid.uuid1()))
+        tmp_file_name = os.path.join(OBJECT_PATH, "%d-%s.jpg" % (fps, uuid.uuid1()))
         cv2.imwrite(tmp_file_name, image)
         with open(tmp_file_name, "rb") as f:
             base64_data = base64.b64encode(f.read())
@@ -140,9 +140,11 @@ class YOLO_v3:
 
 def run(detector, images):
     result_images = []
-    start = time.time()
+    images = os.listdir(images)
     try:
         for image_path in images:
+            if not image_path.endswith(".jpg"):
+                continue
             image = cv2.imread(image_path)
             result_images.append(detector.execute(image))
     except Exception as e:
@@ -155,7 +157,7 @@ def run(detector, images):
 
 def main():
     detector = Detector()
-    datas = ['1.jpg', '2.jpg', '3.jpg']
+    datas = DATA_PATH + '/' + 'test-f1577db8-0dea-11eb-9433-ac1f6ba128da'
     result_images = run(detector, datas)
 
 
