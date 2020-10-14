@@ -11,6 +11,7 @@ import paddle.fluid as fluid
 from yolo_infer import offset_to_lengths
 from yolo_infer import coco17_category_info, bbox2out
 from yolo_infer import Preprocess
+from common.config import DATA_PATH
 
 
 def temp_directory():
@@ -19,7 +20,6 @@ def temp_directory():
 
 COCO_MODEL_PATH = os.path.join(temp_directory(), "yolov3_darknet")
 YOLO_CONFIG_PATH = os.path.join(COCO_MODEL_PATH, "yolo.yml")
-LOCAL_TMP_PATH = os.getenv("UPLOAD_FOLDER", "pic/")
 
 
 class BoundingBox:
@@ -34,7 +34,7 @@ class BoundingBox:
 
 def cv2base64(image, fps):
     try:
-        tmp_file_name = os.path.join(LOCAL_TMP_PATH, "%d-%s.jpg" % (fps, uuid.uuid1()))
+        tmp_file_name = os.path.join(DATA_PATH, "%d-%s.jpg" % (fps, uuid.uuid1()))
         cv2.imwrite(tmp_file_name, image)
         with open(tmp_file_name, "rb") as f:
             base64_data = base64.b64encode(f.read())
@@ -137,69 +137,6 @@ class YOLO_v3:
         objs = self.get_obj_image(self, [image], bboxes)
         return objs[0]
 
-    # def bulk_execute(self, images):
-    #     objs = []
-    #     for image in images:
-    #         objs.append(self.execute(image))
-    #     return objs
-
-#     @property
-#     def name(self):
-#         return "paddle_yolo"
-
-#     @property
-#     def type(self):
-#         return "processor"
-
-#     @property
-#     def input(self):
-#         return "image"
-
-#     @property
-#     def output(self):
-#         return "images"
-
-#     @property
-#     def dimension(self):
-#         return "-1"
-
-#     @property
-#     def metric_type(self):
-#         return "-1"
-
-
-# def save_tmp_file(name, file_data=None, url=None):
-#     start = time.time()
-#     extension = 'jpg'
-#     file_path = os.path.join(LOCAL_TMP_PATH, name + '.' + extension)
-#     if file_data:
-#         img_data = file_data.split(",")
-#         if len(img_data) == 2:
-#             posting = img_data[0]
-#             data_type = posting.split("/")[1]
-#             extension = data_type.split(";")[0]
-#             encode_method = data_type.split(";")[1]
-#             if encode_method != "base64":
-#                 logging.error("Encode method not base64")
-#                 raise
-#                 # raise DecodeError("Encode method not base64")
-#             imgstring = img_data[1]
-#         else:
-#             imgstring = img_data[0]
-#         file_path = os.path.join(LOCAL_TMP_PATH, name + '.' + extension)
-#         with open(file_path, "wb") as f:
-#             f.write(base64.b64decode(imgstring))
-#     if url:
-#         try:
-#             urllib.request.urlretrieve(url, file_path)
-#         except Exception as e:
-#             logging.error("Download file from url error : %s", str(e), exc_info=True)
-#             raise
-#             # raise DownloadFileError("Download file from url %s" % url, e)
-#     end = time.time()
-#     logging.info('  save_tmp_file cost: {:.3f}s'.format(end - start))
-#     return file_path
-
 
 def run(detector, images):
     result_images = []
@@ -214,3 +151,13 @@ def run(detector, images):
     logging.info('%s cost: {:.3f}s, get %d results'.format(end - start),
                  "yolov3 detector", len(result_images))
     return result_images
+
+
+def main():
+    detector = Detector()
+    datas = ['1.jpg', '2.jpg', '3.jpg']
+    result_images = run(detector, datas)
+
+
+if __name__ == '__main__':
+    main()
