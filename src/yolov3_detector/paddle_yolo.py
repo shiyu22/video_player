@@ -156,7 +156,7 @@ def run(detector, images):
 
 
 def main():
-    detector = Detector()
+    detector = YOLO_v3()
     datas = DATA_PATH + '/' + 'test-f1577db8-0dea-11eb-9433-ac1f6ba128da'
     result_images = run(detector, datas)
 
