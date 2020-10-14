@@ -34,8 +34,7 @@ class BoundingBox:
 
 def cv2base64(image, fps):
     try:
-        os.mkdir(DATA_PATH + '/' + "object")
-        tmp_file_name = os.path.join(DATA_PATH, "object/%d-%s.jpg" % (fps, uuid.uuid1()))
+        tmp_file_name = os.path.join(path, "object/%d-%s.jpg" % (fps, uuid.uuid1()))
         cv2.imwrite(tmp_file_name, image)
         with open(tmp_file_name, "rb") as f:
             base64_data = base64.b64encode(f.read())
@@ -142,6 +141,9 @@ def run(detector, path):
     images = os.listdir(path)
     images.sort()
     start = time.time()
+    if os.path.exists(path + '/object'):
+        os.mkdir(path + '/object')
+        
     try:
         for image_path in images:
             if not image_path.endswith(".jpg"):
