@@ -138,16 +138,16 @@ class YOLO_v3:
         return objs[0]
 
 
-def run(detector, images):
+def run(detector, path):
     result_images = []
-    images = os.listdir(images)
+    images = os.listdir(path)
     start = time.time()
     try:
         for image_path in images:
             if not image_path.endswith(".jpg"):
                 continue
-            print(image_path)
-            image = cv2.imread(image_path)
+            print(path + '/' + image_path)
+            image = cv2.imread(path + '/' + image_path)
             result_images.append(detector.execute(image))
     except Exception as e:
         logging.error("something error: %s", str(e), exc_info=True)
