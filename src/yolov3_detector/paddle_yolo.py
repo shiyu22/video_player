@@ -141,7 +141,7 @@ def run(detector, path):
     images = os.listdir(path)
     images.sort()
     start = time.time()
-    if !os.path.exists(path + '/object'):
+    if not os.path.exists(path + '/object'):
         os.mkdir(path + '/object')
 
     try:
