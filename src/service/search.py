@@ -53,8 +53,9 @@ def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_na
     run(detector, DATA_PATH + '/' + prefix)
     
     vectors, obj_images = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
-    print("vectors:", len(obj_images))
+    print("vectors:", obj_images)
     results = search_vectors(index_client, table_name, vectors, "L2")
 
     info, times = get_object_info(conn, cursor, table_name, results, obj_images)
+    print("...........", info, times)
     return info, times
