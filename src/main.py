@@ -37,11 +37,11 @@ def init_conn():
 
 
 def save_file(content, suffix):
-    
     filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
     print(filename)
     with open (filename, 'wb') as f :
         f.write(content)
+    return filename
 
 
 @app.get('/countTable')
