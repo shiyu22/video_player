@@ -63,6 +63,7 @@ async def do_delete_table_api(table_name: str=None):
 @app.get('/getImage')
 async def image_endpoint(img: str):
     try:
+        print("load img:", img)
         return FileResponse(img, media_type="image/jpg")
     except Exception as e:
         logging.error(e)
@@ -104,7 +105,7 @@ async def get_item_info(request: Request, video: UploadFile = File(...), table_n
                 "obj_name": info[i][1],
                 "obj_info": info[i][2],
                 "obj_image": "http://"+ str(host) + "/getImage?img=" + info[i][3],
-                "time": times[i]
+                "time": times[i].split("-")[0]
             }
             print(re)
             results.append(re)
