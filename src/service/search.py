@@ -47,7 +47,7 @@ def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_na
     images = extract_frame(filename, 1, prefix)
     run(detector, DATA_PATH + '/' + prefix)
     
-    vectors = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + 'object')
+    vectors = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
     print("vectors:", len(vectors))
     results = search_vectors(index_client, table_name, vectors, "IP")
 
