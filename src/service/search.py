@@ -36,7 +36,7 @@ def do_search_logo(image_encoder, index_client, conn, cursor, table_name, filena
     if not table_name:
         table_name = LOGO_TABLE
     print(filename)
-    images = extract_frame(filename, 1, filename.split(".")[0])
+    images = extract_frame(filename, 1, filename.split("/")[2].split(".")[0])
     vectors = get_object_vector(images)
     results = search_vectors(index_client, table_name, vectors, "IP")
     print("-----milvus search status------", results)
