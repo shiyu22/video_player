@@ -13,7 +13,7 @@ def connect_mysql():
 
 
 def create_table_mysql(conn, cursor, table_name):
-    sql = "create table if not exists " + table_name + "(milvus_id int, name text, info text, image varchar(100));"
+    sql = "create table if not exists " + table_name + "(milvus_id bigint, name text, info text, image varchar(100));"
     try:
         cursor.execute(sql)
         conn.commit()
@@ -23,7 +23,7 @@ def create_table_mysql(conn, cursor, table_name):
 
 
 def insert_data_to_pg(conn, cursor, table_name, ids, name, info, image):
-    sql = "insert into " + table_name + " values (" + str(ids) + ",'" + name + ",'" + info + ",'" + image + "');"
+    sql = "insert into " + table_name + " values (" + str(ids) + ",'" + name + "','" + info + "','" + image + "');"
     print(sql)
     try:
         cursor.execute(sql)
