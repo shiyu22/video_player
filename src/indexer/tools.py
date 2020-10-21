@@ -33,8 +33,8 @@ def insert_data_to_pg(conn, cursor, table_name, ids, name, info, image):
         logging.error(e)
 
 
-def search_by_milvus_id(conn, cursor, movies_table, ids):
-    sql = "select * from " + movies_table + " where milvus_id=" + ids + ";"
+def search_by_milvus_id(conn, cursor, table_name, ids):
+    sql = "select * from " + table_name + " where milvus_id=" + str(ids) + ";"
     try:
         cursor.execute(sql)
         results = cursor.fetchall()
