@@ -37,7 +37,7 @@ def init_conn():
 
 
 async def save_file(file, suffix):
-    content = file.read()
+    content = await file.read()
     filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
     print(filename)
     with open (filename, 'wb') as f :
