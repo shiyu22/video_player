@@ -35,6 +35,7 @@ def insert_data_to_pg(conn, cursor, table_name, ids, name, info, image):
 
 def search_by_milvus_id(conn, cursor, table_name, ids):
     sql = "select * from " + table_name + " where milvus_id=" + str(ids) + ";"
+    print(sql)
     try:
         cursor.execute(sql)
         results = cursor.fetchall()
