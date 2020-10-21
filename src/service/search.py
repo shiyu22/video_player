@@ -30,7 +30,8 @@ def get_object_vector(image_encoder, path):
 
 
 def get_object_info(conn, cursor, table_name, results, obj_images):
-    info = times = []
+    info = []
+    times = []
     i = 0
     for entities in results:
         print("-----milvus search status------", entities[0].id, entities[0].distance)
