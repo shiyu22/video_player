@@ -8,7 +8,7 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
     if not table_name:
         table_name = LOGO_TABLE
     print("---------", table_name)
-    if table_name in index_client.list_collections():
+    if table_name not in index_client.list_collections():
         print("create table.")
         create_table_mysql(conn, cursor, table_name)
         create_table(index_client, table_name, dimension=1024)
@@ -16,7 +16,7 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
     print(filename)
     vector = image_encoder.execute(filename)
     print(vector)
-    ids = insert_vectors(client, table_name, [vector])
+    ids = insert_vectors(index_client, table_name, [vector])
     insert_data_to_pg(conn, cur, table_name, ids, name, info, filename)
     
     return status
