@@ -73,7 +73,7 @@ async def image_endpoint(img: str):
 async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str=None, table_name: str=None):
     try:
         content = await image.read()
-        filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix + ".jpg"
+        filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + ".jpg"
         with open (filename, 'wb') as f :
             f.write(content)
         index_client, conn, cursor = init_conn()
