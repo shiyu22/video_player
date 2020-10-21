@@ -8,7 +8,7 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
     if not table_name:
         table_name = LOGO_TABLE
     print("---------", table_name)
-    if collection_name in index_client.list_collections():
+    if table_name in index_client.list_collections():
         print("create table.")
         create_table_mysql(conn, cursor, table_name)
         create_table(index_client, table_name, dimension=1024)
