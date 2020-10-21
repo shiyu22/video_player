@@ -4,6 +4,7 @@ from indexer.index import milvus_client, search_vectors, get_vector_by_ids
 from indexer.tools import connect_mysql, search_by_milvus_id
 from frame_extract import extract_frame
 import uuid
+from common.config import DATA_PATH
 from yolov3_detector.paddle_yolo import run
 
 
