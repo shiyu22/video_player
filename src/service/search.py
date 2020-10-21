@@ -34,11 +34,12 @@ def get_object_info(conn, cursor, table_name, results, obj_images):
     i = 0
     for entities in results:
         print("-----milvus search status------", entities[0].id, entities[0].distance)
-        if entities[0].distance>0.65:
+        if entities[0].distance<0.65:
             re = search_by_milvus_id(conn, cursor, table_name, entities[0].id)
             print(re)
             info.append(re)
             times.append(obj_images[i])
+            print("------------------i", i)
         i += 1
     return info, times
 
@@ -52,8 +53,8 @@ def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_na
     run(detector, DATA_PATH + '/' + prefix)
     
     vectors, obj_images = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
-    print("vectors:", len(vectors))
+    print("vectors:", len(obj_images))
     results = search_vectors(index_client, table_name, vectors, "L2")
 
-    info, tiems = get_object_info(conn, cursor, table_name, results, obj_images)
-    return info, tiems
+    info, times = get_object_info(conn, cursor, table_name, results, obj_images)
+    return info, times

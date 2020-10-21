@@ -98,6 +98,7 @@ async def get_item_info(request: Request, video: UploadFile = File(...), table_n
         host = request.headers['host']
         info, times = do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host)
         result_dic = {"code": 0, "msg": "success"}
+        peint(result_dic)
         results = []
         for i in range(len(info)):
             re = {
@@ -107,6 +108,7 @@ async def get_item_info(request: Request, video: UploadFile = File(...), table_n
                 "obj_image": "http://"+ str(host) + "/getImage?img=" + info[i][3].split("/")[2],
                 "time": times[i]
             }
+            print(re)
             results.append(re)
         result_dic["data"] = results
         return result_dic, 200
