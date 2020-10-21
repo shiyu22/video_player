@@ -4,7 +4,7 @@ from indexer.index import insert_vectors, create_table, create_index
 from indexer.tools import create_table_mysql, insert_data_to_pg
 
 
-def do_insert_logo(image_encoder, image_encoder, index_client, conn, cursor, table_name, filename, name, info):
+def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filename, name, info):
     if not table_name:
         table_name = LOGO_TABLE
     if collection_name in index_client.list_collections():
