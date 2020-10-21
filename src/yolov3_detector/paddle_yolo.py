@@ -148,7 +148,7 @@ def run(detector, path):
         for image_path in images:
             if not image_path.endswith(".jpg"):
                 continue
-            print(path + '/' + image_path)
+            # print(path + '/' + image_path)
             image = cv2.imread(path + '/' + image_path)
             result_images.append(detector.execute(image, path))
     except Exception as e:

@@ -9,16 +9,6 @@ from common.config import DATA_PATH
 from yolov3_detector.paddle_yolo import run
 
 
-def get_ids_info(conn, cursor, table_name, host, ids):
-    if not table_name:
-        table_name = MILVUS_TABLE
-    info = search_by_milvus_id(conn, cursor, table_name, str(ids))
-    info = json.loads(info[1], strict=False)
-    img = "http://"+ str(host) + "/getImage?img=" + str(ids)
-    print("============", img)
-    return info, img
-
-
 def get_object_vector(image_encoder, path):
     images = os.listdir(path)
     images.sort()
@@ -34,13 +24,10 @@ def get_object_info(conn, cursor, table_name, results, obj_images):
     times = []
     i = 0
     for entities in results:
-        print("-----milvus search status------", entities[0].id, entities[0].distance)
         if entities[0].distance<0.65:
             re = search_by_milvus_id(conn, cursor, table_name, entities[0].id)
-            print(re)
             info.append(re)
             times.append(obj_images[i])
-            print("------------------i", i)
         i += 1
     return info, times
 
@@ -48,15 +35,13 @@ def get_object_info(conn, cursor, table_name, results, obj_images):
 def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host):
     if not table_name:
         table_name = LOGO_TABLE
-    print(filename)
+
     prefix = filename.split("/")[2].split(".")[0] + "-" + uuid.uuid4().hex
     images = extract_frame(filename, 1, prefix)
     run(detector, DATA_PATH + '/' + prefix)
     
     vectors, obj_images = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
-    print("vectors:", obj_images)
     results = search_vectors(index_client, table_name, vectors, "L2")
 
     info, times = get_object_info(conn, cursor, table_name, results, obj_images)
-    print("...........", info, times)
     return info, times

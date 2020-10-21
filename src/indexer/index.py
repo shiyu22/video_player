@@ -51,7 +51,7 @@ def create_index(client, table_name, metric_type):
 def delete_collection(client, table_name):
     try:
         status = client.drop_collection(collection_name=table_name)
-        print(status)
+        # print(status)
         return status
     except Exception as e:
         print("Milvus ERROR:", e)
