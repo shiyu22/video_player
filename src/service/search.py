@@ -6,7 +6,7 @@ from frame_extract import extract_frame
 import uuid
 import os
 from common.config import DATA_PATH
-from yolov3_detector.paddle_yolo import run
+from yolov3_detector.paddle_yolo import run, YOLO_v3 as Detector
 
 
 def get_object_vector(image_encoder, path):
@@ -32,7 +32,8 @@ def get_object_info(conn, cursor, table_name, results, obj_images):
     return info, times
 
 
-def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host):
+def do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename, host):
+    detector = Detector()
     if not table_name:
         table_name = LOGO_TABLE
 
