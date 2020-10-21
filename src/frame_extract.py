@@ -11,7 +11,9 @@ def extract_frame(file_path, fps, prefix):
     allframes = int(cv2.VideoCapture.get(cap, int(cv2.CAP_PROP_FRAME_COUNT)))
     print("allframes:", allframes)
     success, image = cap.read()
-    os.mkdir(DATA_PATH + '/' + prefix)
+    print(DATA_PATH + '/' + prefix)
+    if not os.path.exists(DATA_PATH + '/' + prefix):
+        os.mkdir(DATA_PATH + '/' + prefix)
     images = []
     while success:
         if count % (int(framerate)/fps) == 0:
