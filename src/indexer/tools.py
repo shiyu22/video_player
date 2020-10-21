@@ -23,7 +23,7 @@ def create_table_mysql(conn, cursor, table_name):
 
 
 def insert_data_to_pg(conn, cur, table_name, ids, name, info, image):
-    sql = "insert into " + table_name + " values (" + ids + ",'" + name + + ",'" + info + ",'" + image + "');"
+    sql = "insert into " + table_name + " values (" + str(ids) + ",'" + name + + ",'" + info + ",'" + image + "');"
     print(sql)
     try:
         cursor.execute(sql)
