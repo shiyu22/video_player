@@ -77,9 +77,9 @@ async def image_endpoint(img: int):
 
 
 @app.post('/insertLogo')
-async def do_insert_logo_api(image: UploadFile = File(...), name: str, info: str=None, table_name: str=None):
+async def do_insert_logo_api(Iamge: UploadFile = File(...), name: str, info: str=None, table_name: str=None):
     try:
-        filename = save_file(image, '.png')
+        filename = save_file(Iamge, '.png')
         index_client, conn, cursor = init_conn()
         info = do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filename, name, info)
         return info, 200
