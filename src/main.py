@@ -61,11 +61,9 @@ async def do_delete_table_api(table_name: str=None):
 
 
 @app.get('/getImage')
-async def image_endpoint(img: int):
+async def image_endpoint(img: str):
     try:
-        img_path = OUT_PATH + '/' + str(img) + '.jpg'
-        print(img_path)
-        return FileResponse(img_path, media_type="image/jpg")
+        return FileResponse(img, media_type="image/jpg")
     except Exception as e:
         logging.error(e)
         return None, 200
@@ -75,7 +73,7 @@ async def image_endpoint(img: int):
 async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str=None, table_name: str=None):
     try:
         content = await image.read()
-        filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
+        filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix + ".jpg"
         with open (filename, 'wb') as f :
             f.write(content)
         index_client, conn, cursor = init_conn()
@@ -105,7 +103,7 @@ async def get_item_info(request: Request, video: UploadFile = File(...), table_n
                 "milvus_id": info[i][0],
                 "obj_name": info[i][1],
                 "obj_info": info[i][2],
-                "obj_image": "http://"+ str(host) + "/getImage?img=" + info[i][3].split("/")[2],
+                "obj_image": "http://"+ str(host) + "/getImage?img=" + info[i][3],
                 "time": times[i]
             }
             print(re)
