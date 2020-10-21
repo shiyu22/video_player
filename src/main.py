@@ -87,8 +87,9 @@ async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str
 @app.post('/getLogoInfo')
 async def get_item_info(request: Request, video: UploadFile = File(...), table_name: str=None):
     try:
-        content = await viedo.read()
-        with open(UPLOAD_PATH + "/" + video.filename, "wb") as f:
+        content = await video.read()
+        filename = UPLOAD_PATH + "/" + video.filename
+        with open(filename, "wb") as f:
             f.write(content)
 
         index_client, conn, cursor = init_conn()
