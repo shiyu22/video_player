@@ -36,7 +36,7 @@ def init_conn():
     return index_client, conn, cursor
 
 
-def save_file(file, suffix):
+async def save_file(file, suffix):
     content = file.read()
     filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
     print(filename)
