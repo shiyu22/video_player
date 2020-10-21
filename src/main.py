@@ -36,14 +36,6 @@ def init_conn():
     return index_client, conn, cursor
 
 
-def save_file(content, suffix):
-    filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
-    print(filename)
-    with open (filename, 'wb') as f :
-        f.write(content)
-    return filename
-
-
 @app.get('/countTable')
 async def do_count_images_api(table_name: str=None):
     try:
@@ -81,7 +73,9 @@ async def image_endpoint(img: int):
 async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str=None, table_name: str=None):
     try:
         content = await image.read()
-        filename = save_file(content, '.png')
+        filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
+        with open (filename, 'wb') as f :
+            f.write(content)
         index_client, conn, cursor = init_conn()
         info = do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filename, name, info)
         return info, 200
@@ -91,10 +85,12 @@ async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str
 
 
 @app.post('/getLogoInfo')
-async def get_item_info(request: Request, viedo: UploadFile = File(...), table_name: str=None):
+async def get_item_info(request: Request, video: UploadFile = File(...), table_name: str=None):
     try:
         content = await viedo.read()
-        filename = save_file(content, '.avi')
+        with open(UPLOAD_PATH + "/" + video.filename, "wb") as f:
+            f.write(content)
+
         index_client, conn, cursor = init_conn()
         host = request.headers['host']
         info = do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename, host)
