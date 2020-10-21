@@ -22,6 +22,7 @@ def get_ids_info(conn, cursor, table_name, host, ids):
 def get_object_vector(image_encoder, path):
     images = os.listdir(path)
     images.sort()
+    vectors = []
     for image in images:
         vector = image_encoder.execute(path + '/' + image)
         vectors.append(vector)
