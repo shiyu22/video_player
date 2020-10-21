@@ -17,7 +17,7 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
     vector = image_encoder.execute(filename)
     print(vector)
     ids = insert_vectors(index_client, table_name, [vector])
-    insert_data_to_pg(conn, cur, table_name, ids, name, info, filename)
+    insert_data_to_pg(conn, cursor, table_name, ids, name, info, filename)
     
     return status
 
