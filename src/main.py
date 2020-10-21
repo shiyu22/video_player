@@ -66,7 +66,7 @@ async def do_delete_table_api(table_name: str=None):
 
 
 @app.get('/getImage')
-def image_endpoint(img: int):
+async def image_endpoint(img: int):
     try:
         img_path = OUT_PATH + '/' + str(img) + '.jpg'
         print(img_path)
@@ -77,7 +77,7 @@ def image_endpoint(img: int):
 
 
 @app.post('/insertLogo')
-def do_insert_logo_api(image: UploadFile = File(...), name: str, info: str=None, table_name: str=None):
+async def do_insert_logo_api(image: UploadFile = File(...), name: str, info: str=None, table_name: str=None):
     try:
         filename = save_file(image, '.png')
         index_client, conn, cursor = init_conn()
@@ -89,7 +89,7 @@ def do_insert_logo_api(image: UploadFile = File(...), name: str, info: str=None,
 
 
 @app.post('/getLogoInfo')
-def get_item_info(request: Request, viedo: UploadFile = File(...), table_name: str=None):
+async def get_item_info(request: Request, viedo: UploadFile = File(...), table_name: str=None):
     try:
         filename = save_file(video, '.avi')
         index_client, conn, cursor = init_conn()
