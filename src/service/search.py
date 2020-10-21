@@ -18,8 +18,9 @@ def get_ids_info(conn, cursor, table_name, host, ids):
     return info, img
 
 
-def get_object_vector(image_encoder, images):
-    vectors = []
+def get_object_vector(image_encoder, path):
+    images = os.listdir(path)
+    images.sort()
     for image in images:
         vector = image_encoder.execute(image)
         vectors.append(vector)
@@ -43,9 +44,10 @@ def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_na
     print(filename)
     prefix = filename.split("/")[2].split(".")[0] + "-" + uuid.uuid4().hex
     images = extract_frame(filename, 1, prefix)
-    result_images = run(detector, DATA_PATH + '/' + prefix)
-    print("------result_images", result_images)
-    vectors = get_object_vector(image_encoder, result_images)
+    run(detector, DATA_PATH + '/' + prefix)
+    
+    vectors = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + 'object')
+    print("vectors:", len(vectors))
     results = search_vectors(index_client, table_name, vectors, "IP")
 
     info = get_object_info(conn, cursor, table_name, results)
