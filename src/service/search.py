@@ -23,7 +23,7 @@ def get_object_vector(image_encoder, path):
     images = os.listdir(path)
     images.sort()
     for image in images:
-        vector = image_encoder.execute(image)
+        vector = image_encoder.execute(path + '/' + image)
         vectors.append(vector)
     return vectors
 
