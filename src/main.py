@@ -96,8 +96,20 @@ async def get_item_info(request: Request, video: UploadFile = File(...), table_n
 
         index_client, conn, cursor = init_conn()
         host = request.headers['host']
-        info = do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host)
-        return "Info {}".format(info), 200
+        info, times = do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host)
+        result_dic = {"code": 0, "msg": "success"}
+        results = []
+        for i in range(len(info)):
+            re = {
+                "milvus_id": info[i][0],
+                "obj_name": info[i][1],
+                "obj_info": info[i][2],
+                "obj_image": "http://"+ str(host) + "/getImage?img=" + info[i][3].split("/")[2],
+                "time": times[i]
+            }
+            results.append(re)
+        result_dic["data"] = results
+        return result_dic, 200
     except Exception as e:
         logging.error(e)
         return "Error with {}".format(e), 400

@@ -26,18 +26,21 @@ def get_object_vector(image_encoder, path):
     for image in images:
         vector = image_encoder.execute(path + '/' + image)
         vectors.append(vector)
-    return vectors
+    return vectors, images
 
 
-def get_object_info(conn, cursor, table_name, results):
-    info = []
+def get_object_info(conn, cursor, table_name, results, obj_images):
+    info = times = []
+    i = 0
     for entities in results:
         print("-----milvus search status------", entities[0].id, entities[0].distance)
         if entities[0].distance>0.65:
             re = search_by_milvus_id(conn, cursor, table_name, entities[0].id)
             print(re)
             info.append(re)
-    return info
+            times.append(obj_images[i])
+        i += 1
+    return info, times
 
 
 def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host):
@@ -48,9 +51,9 @@ def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_na
     images = extract_frame(filename, 1, prefix)
     run(detector, DATA_PATH + '/' + prefix)
     
-    vectors = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
+    vectors, obj_images = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
     print("vectors:", len(vectors))
-    results = search_vectors(index_client, table_name, vectors, "IP")
+    results = search_vectors(index_client, table_name, vectors, "L2")
 
-    info = get_object_info(conn, cursor, table_name, results)
-    return info
+    info, tiems = get_object_info(conn, cursor, table_name, results, obj_images)
+    return info, tiems
