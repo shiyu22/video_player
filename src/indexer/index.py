@@ -1,51 +1,47 @@
 import logging
-from milvus import Milvus, IndexType, MetricType, Status
-from common.config import MILVUS_HOST, MILVUS_PORT, VECTOR_DIMENSION, TOP_K
+from milvus import Milvus, DataType
+from common.config import MILVUS_HOST, MILVUS_PORT, LOGO_DIMENSION, FACE_DIMENSION, TOP_K
 
 
 def milvus_client():
     try:
         milvus = Milvus(host=MILVUS_HOST, port=MILVUS_PORT)
-        # status = milvus.connect(MILVUS_HOST, MILVUS_PORT)
         return milvus
     except Exception as e:
         print("Milvus ERROR:", e)
         logging.error(e)
 
 
-def create_table(client, table_name=None, dimension=VECTOR_DIMENSION,
-                 index_file_size=1024, metric_type=MetricType.L2):
-    table_param = {
-        'collection_name': table_name,
-        'dimension': dimension,
-        'index_file_size':index_file_size,
-        'metric_type': metric_type
+def create_table(client, table_name, dimension):
+    collection_param = {
+    "fields": [
+        {"name": "embedding", "type": DataType.FLOAT_VECTOR, "params": {"dim": dimension}},
+    ],
+    "segment_row_limit": 800000,
+    "auto_id": True
     }
     try:
-        status = client.create_collection(table_param)
+        status = client.create_collection(collection_name, collection_param)
         return status
     except Exception as e:
         print("Milvus ERROR:", e)
         logging.error(e)
 
 
-def insert_vectors(client, table_name, vectors, ids):
-    if not client.has_collection(collection_name=table_name):
-        logging.error("collection %s not exist", table_name)
-        return
+def insert_vectors(client, table_name, vectors):
+    hybrid_entities = [{"name": "embedding", "values": vectors, "type": DataType.FLOAT_VECTOR}]
     try:
-        status, ids = client.insert(collection_name=table_name, records=vectors, ids=ids)
-        return status, ids
+        ids = client.insert(table_name, hybrid_entities)
+        return ids
     except Exception as e:
         print("Milvus ERROR:", e)
         logging.error(e)
 
 
-def create_index(client, table_name):
+def create_index(client, table_name, metric_type):
     try:
-        param = {'nlist': 16384}
-        # status = client.create_index(table_name, param)
-        status = client.create_index(table_name, IndexType.IVF_FLAT, param)
+        status = client.create_index(table_name, "embedding",
+                    {"index_type": "IVF_FLAT", "metric_type": metric_type, "params": {"nlist": 8192}})
         return status
     except Exception as e:
         print("Milvus ERROR:", e)
@@ -62,11 +58,21 @@ def delete_collection(client, table_name):
         logging.error(e)
 
 
-def search_vectors(client, table_name, vectors, top_k=TOP_K):
+def search_vectors(client, table_name, vectors, metric, top_k=TOP_K):
+    query_hybrid = {
+        "bool": {
+            "must": [
+                {
+                    "vector": {
+                        "embedding": {"topk": 3, "query": vectors, "metric_type": metric}
+                    }
+                }
+            ]
+        }
+    }
     try:
-        search_param = {'nprobe': 16}
-        status, res = client.search(collection_name=table_name, query_records=vectors, top_k=top_k, params=search_param)
-        return status, res
+        res = client.search(table_name, query_hybrid)
+        return res
     except Exception as e:
         print("Milvus ERROR:", e)
         logging.error(e)

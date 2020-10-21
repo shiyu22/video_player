@@ -1,20 +1,24 @@
 import os
 import logging
-from service.search import do_search, get_list_info, get_ids_info
-from service.count import do_count
+from service.insert import do_insert_logo
+from service.search import do_search_logo
+from service.count import do_count_table
 from service.delete import do_delete_table
 from indexer.index import milvus_client
 from indexer.tools import connect_mysql
-from common.config import OUT_PATH
+from common.config import UPLOAD_PATH
 import time
 from fastapi import FastAPI
+from fastapi import File
+from fastapi import UploadFile
 import uvicorn
 from starlette.responses import FileResponse
 from starlette.requests import Request
-import random
+import uuid
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+image_encoder = CustomOperator()
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,18 +35,19 @@ def init_conn():
     return index_client, conn, cursor
 
 
-def get_img_list():
-    list_id = []
-    list_ids = os.listdir(OUT_PATH)
-    list_ids.sort()
-    return list_ids
+def save_file(file, suffix):
+    content = await image.read()
+    filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
+    print(filename)
+    with open (filename, 'wb') as f :
+        f.write(content)
 
 
 @app.get('/countTable')
 async def do_count_images_api(table_name: str=None):
     try:
         index_client, conn, cursor = init_conn()
-        rows_milvus, rows_mysql = do_count(index_client, conn, cursor, table_name)
+        rows_milvus, rows_mysql = do_count_table(index_client, conn, cursor, table_name)
         return "{0},{1}".format(rows_milvus, rows_mysql), 200
     except Exception as e:
         logging.error(e)
@@ -71,46 +76,26 @@ def image_endpoint(img: int):
         return None, 200
 
 
-@app.post('/getRandom')
-def get_random_item(request: Request, num: int=None, table_name: str=None):
+@app.post('/insertLogo')
+def do_insert_logo_api(image: UploadFile = File(...), name: str, info: str=None, table_name: str=None):
     try:
-        if not num:
-            num = 16
+        filename = save_file(image, '.png')
         index_client, conn, cursor = init_conn()
-        img_list = get_img_list()
-        list_id = random.sample(img_list, num)
-        host = request.headers['host']
-        print(list_id)
-        info = get_list_info(conn, cursor, table_name, host, list_id)
+        info = do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filename, name, info)
         return info, 200
     except Exception as e:
         logging.error(e)
         return "Error with {}".format(e), 400
 
 
-@app.get('/getInfo')
-def get_item_info(request: Request, ids: int, table_name: str=None):
+@app.post('/getLogoInfo')
+def get_item_info(request: Request, viedo: UploadFile = File(...), table_name: str=None):
     try:
+        filename = save_file(video, '.avi')
         index_client, conn, cursor = init_conn()
         host = request.headers['host']
-        info = get_ids_info(conn, cursor, table_name, host, ids)
+        info = do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename, host)
         return info, 200
-    except Exception as e:
-        logging.error(e)
-        return "Error with {}".format(e), 400
-
-
-@app.post('/getSimilarUser')
-def do_search_images_api(request: Request, search_id: list, table_name: str=None):
-    try:
-        index_client, conn, cursor = init_conn()
-        host = request.headers['host']
-        img_list = get_img_list()
-        list_id = do_search(index_client, conn, cursor, img_list, search_id, table_name)
-        # print("--------", list_id)
-        info = get_list_info(conn, cursor, table_name, host, list_id)
-        return info, 200
-
     except Exception as e:
         logging.error(e)
         return "Error with {}".format(e), 400
