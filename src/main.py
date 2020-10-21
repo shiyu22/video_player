@@ -36,7 +36,7 @@ def init_conn():
 
 
 def save_file(file, suffix):
-    content = await image.read()
+    content = image.read()
     filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
     print(filename)
     with open (filename, 'wb') as f :
@@ -77,9 +77,9 @@ async def image_endpoint(img: int):
 
 
 @app.post('/insertLogo')
-async def do_insert_logo_api(name: str, Iamge: UploadFile = File(...), info: str=None, table_name: str=None):
+async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str=None, table_name: str=None):
     try:
-        filename = save_file(Iamge, '.png')
+        filename = save_file(image, '.png')
         index_client, conn, cursor = init_conn()
         info = do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filename, name, info)
         return info, 200
