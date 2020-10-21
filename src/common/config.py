@@ -9,7 +9,7 @@ TOP_K = os.getenv("TOP_K", 10)
 LOGO_TABLE = os.getenv("LOGO_TABLE", "logo")
 FACE_TABLE = os.getenv("FACE_TABLE", "face")
 
-MYSQL_HOST = os.getenv("MYSQL_HOST", "192.168.1.85")
+MYSQL_HOST = os.getenv("MYSQL_HOST", "192.168.1.58")
 MYSQL_PORT = os.getenv("MYSQL_PORT", 3306)
 MYSQL_USER = os.getenv("MYSQL_USER", "root")
 MYSQL_PWD = os.getenv("MYSQL_PWD", "123456")
