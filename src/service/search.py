@@ -15,7 +15,7 @@ def get_ids_info(conn, cursor, table_name, host, ids):
     return info, img
 
 
-def get_object_vector(images):
+def get_object_vector(image_encoder, images):
     vectors = []
     for image in images:
         vector = image_encoder.execute(image)
@@ -23,7 +23,7 @@ def get_object_vector(images):
     return vectors
 
 
-def get_object_info(results):
+def get_object_info(conn, cursor, table_name, results):
     info = []
     for results_id in results.id_array:
         re = search_by_milvus_id(conn, cursor, movies_table, results_id[0])
@@ -37,8 +37,8 @@ def do_search_logo(image_encoder, index_client, conn, cursor, table_name, filena
         table_name = LOGO_TABLE
     print(filename)
     images = extract_frame(filename, 1, filename.split("/")[2].split(".")[0])
-    vectors = get_object_vector(images)
+    vectors = get_object_vector(image_encoder, images)
     results = search_vectors(index_client, table_name, vectors, "IP")
     print("-----milvus search status------", results)
-    info = get_object_info(results)
+    info = get_object_info(conn, cursor, table_name, results)
     return info
