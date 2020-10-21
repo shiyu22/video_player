@@ -42,7 +42,7 @@ def do_search_logo(detector, image_encoder, index_client, conn, cursor, table_na
     print(filename)
     prefix = filename.split("/")[2].split(".")[0] + "-" + uuid.uuid4().hex
     images = extract_frame(filename, 1, prefix)
-    result_images = run(detector, prefix)
+    result_images = run(detector, DATA_PATH + '/' + prefix)
     print("------result_images", result_images)
     vectors = get_object_vector(image_encoder, result_images)
     results = search_vectors(index_client, table_name, vectors, "IP")
