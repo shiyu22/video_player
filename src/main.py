@@ -103,4 +103,4 @@ async def get_item_info(request: Request, viedo: UploadFile = File(...), table_n
 
 
 if __name__ == '__main__':
-    uvicorn.run(app=app, host='127.0.0.1', port=8000)
+    uvicorn.run(app=app, host='192.168.1.58', port=8000)
