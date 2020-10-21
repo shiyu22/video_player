@@ -13,7 +13,7 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
         create_table_mysql(conn, cursor, table_name)
         create_table(index_client, table_name, dimension=1024)
     
-    peint(filename)
+    print(filename)
     vector = image_encoder.execute(filename)
     print(vector)
     ids = insert_vectors(client, table_name, [vector])
