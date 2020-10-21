@@ -17,9 +17,11 @@ from starlette.requests import Request
 import uuid
 from starlette.middleware.cors import CORSMiddleware
 from resnet50_encoder.encode import CustomOperator
+from yolov3_detector.paddle_yolo import YOLO_v3 as Detector
 
 app = FastAPI()
 image_encoder = CustomOperator()
+detector = Detector()
 
 app.add_middleware(
     CORSMiddleware,
@@ -94,7 +96,7 @@ async def get_item_info(request: Request, video: UploadFile = File(...), table_n
 
         index_client, conn, cursor = init_conn()
         host = request.headers['host']
-        info = do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename, host)
+        info = do_search_logo(detector, image_encoder, index_client, conn, cursor, table_name, filename, host)
         return "Info {}".format(info), 200
     except Exception as e:
         logging.error(e)
