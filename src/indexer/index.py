@@ -89,7 +89,7 @@ def has_table(client, table_name):
 
 def count_collection(client, table_name):
     try:
-        status, num = client.count_entities(collection_name=table_name)
+        num = client.count_entities(collection_name=table_name)
         return num
     except Exception as e:
         print("Milvus ERROR:", e)

@@ -11,7 +11,7 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
     if table_name not in index_client.list_collections():
         print("create table.")
         create_table_mysql(conn, cursor, table_name)
-        create_table(index_client, table_name, dimension=1024)
+        create_table(index_client, table_name, dimension=2048)
     
     print(filename)
     vector = image_encoder.execute(filename)
