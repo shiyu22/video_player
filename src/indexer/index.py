@@ -21,7 +21,7 @@ def create_table(client, table_name, dimension):
     "auto_id": True
     }
     try:
-        status = client.create_collection(collection_name, collection_param)
+        status = client.create_collection(table_name, collection_param)
         return status
     except Exception as e:
         print("Milvus ERROR:", e)
