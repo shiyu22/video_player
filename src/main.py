@@ -16,6 +16,7 @@ from starlette.responses import FileResponse
 from starlette.requests import Request
 import uuid
 from starlette.middleware.cors import CORSMiddleware
+from resnet50_encoder.encode import CustomOperator
 
 app = FastAPI()
 image_encoder = CustomOperator()
