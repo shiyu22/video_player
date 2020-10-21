@@ -66,9 +66,9 @@ class CustomOperator:
     #     return images_vectors
 
 
-encoder = CustomOperator()
-images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg']
-images_vectors = []
-for image_path in images:
-    images_vectors.append(encoder.execute(image_path))
-print("images_vectors:", len(images_vectors), len(images_vectors))
+# encoder = CustomOperator()
+# images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg']
+# images_vectors = []
+# for image_path in images:
+#     images_vectors.append(encoder.execute(image_path))
+# print("images_vectors:", len(images_vectors), len(images_vectors))
