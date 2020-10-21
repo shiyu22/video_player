@@ -22,6 +22,7 @@ def extract_frame(file_path, fps, prefix):
         success, image = cap.read()
         count += 1
     cap.release()
+    print(images)
     return images
 
 

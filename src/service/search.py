@@ -35,6 +35,7 @@ def get_object_info(results):
 def do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename, host):
     if not table_name:
         table_name = LOGO_TABLE
+    print(filename)
     images = extract_frame(filename, 1, filename.split(".")[0])
     vectors = get_object_vector(images)
     results = search_vectors(index_client, table_name, vectors, "IP")
