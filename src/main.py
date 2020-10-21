@@ -37,7 +37,7 @@ def init_conn():
 
 
 def save_file(file, suffix):
-    content = image.read()
+    content = file.read()
     filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
     print(filename)
     with open (filename, 'wb') as f :
