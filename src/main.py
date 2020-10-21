@@ -36,8 +36,8 @@ def init_conn():
     return index_client, conn, cursor
 
 
-async def save_file(file, suffix):
-    content = await file.read()
+def save_file(content, suffix):
+    
     filename = UPLOAD_PATH + "/" + uuid.uuid4().hex + suffix
     print(filename)
     with open (filename, 'wb') as f :
@@ -80,7 +80,8 @@ async def image_endpoint(img: int):
 @app.post('/insertLogo')
 async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str=None, table_name: str=None):
     try:
-        filename = save_file(image, '.png')
+        content = await image.read()
+        filename = save_file(content, '.png')
         index_client, conn, cursor = init_conn()
         info = do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filename, name, info)
         return info, 200
@@ -92,7 +93,8 @@ async def do_insert_logo_api(name: str, image: UploadFile = File(...), info: str
 @app.post('/getLogoInfo')
 async def get_item_info(request: Request, viedo: UploadFile = File(...), table_name: str=None):
     try:
-        filename = save_file(video, '.avi')
+        content = await viedo.read()
+        filename = save_file(content, '.avi')
         index_client, conn, cursor = init_conn()
         host = request.headers['host']
         info = do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename, host)
