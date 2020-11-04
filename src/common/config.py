@@ -1,9 +1,9 @@
 import os
 
 MILVUS_HOST = os.getenv("MILVUS_HOST", "192.168.1.58")
-MILVUS_PORT = os.getenv("MILVUS_PORT", 19520)
+MILVUS_PORT = os.getenv("MILVUS_PORT", 19666)
 LOGO_DIMENSION = os.getenv("LOGO_DIMENSION", 256)
-FACE_DIMENSION = os.getenv("FACE_DIMENSION", 256)
+FACE_DIMENSION = os.getenv("FACE_DIMENSION", 512)
 TOP_K = os.getenv("TOP_K", 10)
 
 LOGO_TABLE = os.getenv("LOGO_TABLE", "logo")

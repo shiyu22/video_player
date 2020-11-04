@@ -15,10 +15,12 @@ import sklearn
 from sklearn.decomposition import PCA
 from time import sleep
 from easydict import EasyDict as edict
-from mtcnn_detector import MtcnnDetector
+from face_encoder.deploy.mtcnn_detector import MtcnnDetector
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src', 'common'))
 import face_image
 import face_preprocess
+from common.config import DATA_PATH
+import shutil
 
 
 def do_flip(data):
@@ -79,17 +81,16 @@ class FaceModel:
     if bbox.shape[0]==0:
         return None
     for i in range(bbox.shape[0]):
-        # 获取每一个坐标
-        bbox_ = bbox[i,0:4]
+        # 获取每一个坐�?        bbox_ = bbox[i,0:4]
         # 存放坐标
         # bbox_list.append(bbox_)
         # 获取每一个特征点
         points_ = points[i,:].reshape((2,5)).T
-        nimg = face_preprocess.preprocess(face_img, bbox_, points_, image_size='112,112')
+        nimg = face_preprocess.preprocess(face_img, bbox, points_, image_size='112,112')
         nimg = cv2.cvtColor(nimg, cv2.COLOR_BGR2RGB)
-        cv2.imshow('image',nimg)
-        cv2.waitKey(0) 
-        cv2.destroyAllWindows()
+        # cv2.imshow('image',nimg)
+        # cv2.waitKey(0) 
+        # cv2.destroyAllWindows()
         aligned = np.transpose(nimg, (2,0,1))
         # 存放坐标
         aligned_list.append(aligned)

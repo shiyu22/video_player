@@ -19,3 +19,18 @@ def do_insert_logo(image_encoder, index_client, conn, cursor, table_name, filena
     
     return "insert successfully!"
 
+def do_insert_face(image_encoder, index_client, conn, cursor, table_name, filename, name, info):
+    if not table_name:
+        table_name = FACE_TABLE
+
+    if table_name not in index_client.list_collections():
+        print("create table.")
+        create_table_mysql(conn, cursor, table_name)
+        create_table(index_client, table_name, dimension=512)
+    
+    vector = image_encoder.execute(filename)
+    ids = insert_vectors(index_client, table_name, vector)
+    insert_data_to_pg(conn, cursor, table_name, ids[0], name, info, filename)
+    
+    return "insert successfully!"
+
