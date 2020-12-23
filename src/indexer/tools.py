@@ -1,11 +1,10 @@
 import logging
-from common.config import MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PWD, MYSQL_DB
+from video_player.src.common.config import MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PWD, MYSQL_DB
 import pymysql
 
 
 def connect_mysql():
     try:
-        # conn = pymysql.connect(host="127.0.0.1",user="root",port=3306,password="123456",database="mysql", local_infile=True)
         conn = pymysql.connect(host=MYSQL_HOST,user=MYSQL_USER,port=MYSQL_PORT,password=MYSQL_PWD,database=MYSQL_DB, local_infile=True)
         return conn
     except Exception as e:
@@ -13,8 +12,38 @@ def connect_mysql():
         logging.error(e)
 
 
-def create_table_mysql(conn,cursor, table_name):
-    sql = "create table if not exists " + table_name + "(milvus_id int, info text);"
+def create_table_mysql(conn, cursor, table_name):
+    sql = "create table if not exists " + table_name + "(milvus_id bigint, name text, info text, image varchar(100));"
+    try:
+        cursor.execute(sql)
+        conn.commit()
+    except Exception as e:
+        print("MYSQL ERROR:", sql)
+        logging.error(e)
+
+def insert_video_path(conn, cursor, user_passpord, path):
+    try:
+        sql = "select count(*) from search_video_path where user_passpord = '" + user_passpord + "';"
+        print(sql)
+        cursor.execute(sql)
+        result = cursor.fetchall()[0][0]
+        if result == 0:
+            sql = "insert into search_video_path" + " values ('" + user_passpord + "','" + path + "');"
+            print(sql)
+            cursor.execute(sql)
+            conn.commit()
+        else:
+            sql = "UPDATE search_video_path SET path = " + "'" + path + "' " + "WHERE user_passpord = " + "'" + user_passpord + "';"
+            print(sql)
+            cursor.execute(sql)
+            conn.commit()
+    except Exception as e:
+        print("MYSQL ERROR:", sql)
+        logging.error(e)
+       
+def insert_data_to_pg(conn, cursor, table_name, ids, name, info, image):
+    sql = "insert into " + table_name + " values (" + str(ids) + ",'" + name + "','" + info + "','" + image + "');"
+    print(sql)
     try:
         cursor.execute(sql)
         conn.commit()
@@ -23,35 +52,26 @@ def create_table_mysql(conn,cursor, table_name):
         logging.error(e)
 
 
-def load_ids_to_mysql(conn, cursor, table_name, file_name):
-    sql = "load data local infile '" + file_name + "' into table " + table_name + " fields terminated by ',';"
-    try:
-        cursor.execute(sql)
-        conn.commit()
-        print("MYSQL load ids table.")
-    except Exception as e:
-        print("MYSQL ERROR:", sql)
-        logging.error(e)
-
-
-def load_movies_to_mysql(conn, cursor, table_name, file_name):
-    sql = "load data local infile '" + file_name + "' into table " + table_name + " fields terminated by '::';"
-    try:
-        cursor.execute(sql)
-        conn.commit()
-        print("MYSQL load movies table.")
-    except Exception as e:
-        print("MYSQL ERROR:", sql)
-        logging.ERROR(e)
-
-
-def search_by_milvus_id(conn, cursor, movies_table, ids):
-    sql = "select * from " + movies_table + " where milvus_id=" + ids + ";"
+def search_by_milvus_id(conn, cursor, table_name, ids):
+    sql = "select * from " + table_name + " where milvus_id=" + str(ids) + ";"
+    print(sql)
     try:
         cursor.execute(sql)
         results = cursor.fetchall()
         print("MYSQL search by milvus id.")
         return results[0]
+    except Exception as e:
+        print("MYSQL ERROR:", sql)
+        logging.error(e)
+
+def search_video_by_user(conn, cursor, user_passpord):
+    sql = "select * from search_video_path" + " where user_passpord = '" + user_passpord + "';"
+    print(sql)
+    try:
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        print("MYSQL search by userid.")
+        return results[0][1]
     except Exception as e:
         print("MYSQL ERROR:", sql)
         logging.error(e)

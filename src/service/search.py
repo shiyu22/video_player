@@ -1,61 +1,87 @@
 import logging as log
-from common.config import MILVUS_TABLE, OUT_PATH, OUT_DATA
-from indexer.index import milvus_client, search_vectors, get_vector_by_ids
-from indexer.tools import connect_mysql, search_by_milvus_id
+from video_player.src.common.config import LOGO_TABLE, FACE_TABLE
+from video_player.src.indexer.index import milvus_client, search_vectors, get_vector_by_ids
+from video_player.src.indexer.tools import connect_mysql, search_by_milvus_id
+from video_player.src.frame_extract import extract_frame
+import uuid
+import os
+from video_player.src.common.config import DATA_PATH
+# from video_player.src.yolov3_detector.paddle_yolo import run, YOLO_v3 as Detector
 import numpy as np
-import torch
-import pickle
-import dgl
-import json
-import random
 
 
-def get_list_info(conn, cursor, table_name, host, list_ids):
-    if not table_name:
-        table_name = MILVUS_TABLE
-    list_info = {}
-    list_img = []
-    for ids in list_ids:
-        ids = ids[:-4]
-        info, img = get_ids_info(conn, cursor, table_name, host, int(ids))
-
-        title = info["Title"]
-        year = info["Year"]
-        list_info[ids] = [title, year, img]
-    return list_info
+# def get_object_vector(image_encoder, path):
+#     images = os.listdir(path)
+#     images.sort()
+#     vectors = []
+#     for image in images:
+#         vector = image_encoder.execute(path + '/' + image)
+#         vectors.append(vector)
+#     return vectors, images
 
 
-def get_ids_info(conn, cursor, table_name, host, ids):
-    if not table_name:
-        table_name = MILVUS_TABLE
-    info = search_by_milvus_id(conn, cursor, table_name, str(ids))
-    info = json.loads(info[1], strict=False)
-    img = "http://"+ str(host) + "/getImage?img=" + str(ids)
-    print("============", img)
-    return info, img
+def get_face_vector(face_encoder, path):
+    images = os.listdir(path)
+    images.sort()
+    vectors = []
+    for image in images:
+        vector = face_encoder.execute(path + '/' + image)
+        vectors.append(vector)
+    return vectors, images
 
 
-def do_search(index_client, conn, cursor, img_list, search_id, table_name):
-    if not table_name:
-        table_name = MILVUS_TABLE
+def get_face_info(conn, cursor, table_name, results):
+    info = []
+    for entity in results:
+        if entity[0].distance < 1.15:
+            re = search_by_milvus_id(conn, cursor, table_name, entity[0].id)
+            info.append(re)
+    return info
 
-    _, vector_item = get_vector_by_ids(index_client, table_name, search_id)
-    status, results = search_vectors(index_client, table_name, vector_item)
-    print("-----milvus search status------", status)
 
-    results_ids = []
-    search_num = len(search_id)
-    num = 100/search_num
-    print("-----num:", num)
-    for results_id in results.id_array:
-        k = 0
-        for i in results_id:
-            if k >= num:
-                break
-            img = str(i) +'.jpg'
-            if img in img_list and i not in search_id:
-                results_ids.append(img)
-                k += 1
-    # print(results_ids)
+# def get_object_info(conn, cursor, table_name, results, obj_images):
+#     info = []
+#     times = []
+#     i = 0
+#     for entities in results:
+#         if entities[0].distance < 0.65:
+#             re = search_by_milvus_id(conn, cursor, table_name, entities[0].id)
+#             info.append(re)
+#             times.append(obj_images[i])
+#         i += 1
+#     return info, times
 
-    return results_ids
+
+# def do_search_logo(image_encoder, index_client, conn, cursor, table_name, filename):
+#     detector = Detector()
+#     if not table_name:
+#         table_name = LOGO_TABLE
+
+#     prefix = filename.split("/")[2].split(".")[0] + "-" + uuid.uuid4().hex
+#     images = extract_frame(filename, 1, prefix)
+#     run(detector, DATA_PATH + '/' + prefix)
+
+#     vectors, obj_images = get_object_vector(image_encoder, DATA_PATH + '/' + prefix + '/object')
+#     results = search_vectors(index_client, table_name, vectors, "L2")
+
+#     info, times = get_object_info(conn, cursor, table_name, results, obj_images)
+#     return info, times
+
+
+def do_only_her(face_encoder, index_client, conn, cursor, table_name, filename):
+    prefix = filename.split("/")[-1].split(".")[0] + "-" + uuid.uuid4().hex
+    images = extract_frame(filename, 1, prefix)
+    vectors, face_images = get_face_vector(face_encoder, DATA_PATH + '/' + prefix)
+    global_info = []
+    for faces in vectors:
+        results = search_vectors(index_client, table_name, faces)
+        info = get_face_info(conn, cursor, table_name, results)
+        global_info.append(info)
+    return global_info
+
+
+def do_search_face(face_encoder, index_client, conn, cursor, table_name, filename):
+    faces = face_encoder.execute(filename)
+    results = search_vectors(index_client, table_name, faces)
+    info = get_face_info(conn, cursor, table_name, results)
+    return info

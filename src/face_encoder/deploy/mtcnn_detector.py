@@ -11,7 +11,7 @@ try:
 except ImportError:
     izip = zip
 
-from helper import nms, adjust_input, generate_bbox, detect_first_stage_warpper
+from video_player.src.face_encoder.deploy.helper import nms, adjust_input, generate_bbox, detect_first_stage_warpper
 
 class MtcnnDetector(object):
     """
